@@ -2,8 +2,8 @@ import { AStar } from "./AStar.js";
 import { Node } from "./Node.js";
 
 const container = document.getElementById("container");
-const clearBtn = document.getElementById("myButton");
-const solveBtn = document.getElementById("myButton2");
+const solveBtn = document.getElementById("myButton1");
+const clearBtn = document.getElementById("myButton2");
 const pathStatus = document.getElementById("mySpan");
 
 const Width = 10,
@@ -107,7 +107,7 @@ function drawPath() {
     pathStatus.innerText = "No path found, generate new grid.";
     return;
   } else {
-    pathStatus.innerText = "Shorted path found.";
+    pathStatus.innerText = "Shortest path found.";
   }
 
   // https://stackoverflow.com/a/30865841 - setTimeout
@@ -118,8 +118,8 @@ function drawPath() {
         // console.log(x, y);
         const cell = getCellDiv(coord);
         cell.setAttribute("isSelected", true);
-        // cell.className = "node-shortest-path";
-        paintCell(coord, CELL_TYPE.PATH);
+        cell.className = "node-shortest-path";
+        // paintCell(coord, CELL_TYPE.PATH);
       }, pathVisualDelay * i);
     })(i);
   }
@@ -132,7 +132,6 @@ function resetGrid() {
   targetSelected = false;
   attachedMouseEnter = false;
   pathDrawn = false;
-  pathStatus.innerText = "Select Starting/Target Node. Then choose Obstacles.";
   initVisualizer();
 }
 

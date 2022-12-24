@@ -1,19 +1,43 @@
 body {
   margin: 0;
   padding: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  position: absolute;
 }
 
 .mainDiv {
-  display: grid;
+  display: flex;
   justify-items: center;
+  align-items: center;
 }
 
 #mySpan {
   margin-bottom: 10px;
+  background-color: antiquewhite;
+}
+
+#instructions_panel {
+  flex: 0;
+}
+
+#left-panel {
+  width: 300px;
 }
 
 .mainBtns {
   margin: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.blue {
+  color: blue;
+}
+
+.red {
+  color: red;
 }
 
 :root {
@@ -22,8 +46,7 @@ body {
 }
 
 #container {
-  display: grid;
-  /* grid-gap: 1em; */
+  display: inline-grid;
   grid-template-rows: repeat(var(--grid-rows), 1fr);
   grid-template-columns: repeat(var(--grid-cols), 1fr);
 }
@@ -32,7 +55,7 @@ body {
   padding: 1em;
   outline: 1px solid rgb(134, 154, 189);
   border: 1px solid #ddd;
-  /* text-align: center; */
+  text-align: center;
   width: 1rem;
   height: 1rem;
   /* font-size: 11px; */
@@ -40,7 +63,7 @@ body {
 
 .node-visited {
   animation-name: visitedAnimation;
-  animation-duration: 1.5s;
+  animation-duration: 1s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-direction: alternate;
@@ -58,19 +81,20 @@ body {
   }
 
   50% {
-    background-color: rgba(17, 104, 217, 0.75);
+    transform: scale(0.4);
+    background-color: rgba(17, 104, 217, 0.55);
     outline: 1px solid rgb(134, 154, 189);
   }
 
   75% {
-    transform: scale(1.2);
-    background-color: rgba(0, 217, 159, 0.75);
+    transform: scale(0.8);
+    background-color: rgba(0, 217, 159, 0.55);
     outline: 1px solid rgb(134, 154, 189);
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(0, 190, 218, 0.75);
+    background-color: rgba(0, 190, 218, 0.45);
     outline: 1px solid rgb(134, 154, 189);
   }
 }
@@ -79,7 +103,7 @@ body {
   animation-name: shortestPath;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;
-  animation-delay: 0;
+  animation-delay: 0.5;
   animation-direction: alternate;
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
@@ -88,20 +112,17 @@ body {
 
 @keyframes shortestPath {
   0% {
-    transform: scale(0.6);
     background-color: rgb(255, 254, 106);
     outline: 1px solid rgb(134, 154, 189);
   }
 
   50% {
-    transform: scale(1.2);
-    background-color: rgb(255, 254, 106);
+    background-color: rgba(29, 214, 57, 0.75);
     outline: 1px solid rgb(134, 154, 189);
   }
 
   100% {
-    transform: scale(1);
-    background-color: rgb(255, 254, 106);
+    background-color: yellow;
     outline: 1px solid rgb(134, 154, 189);
   }
 }

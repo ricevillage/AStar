@@ -10,7 +10,6 @@ export class AStar {
   m_row;
   m_col;
   path;
-  // explored;
 
   constructor(row, col) {
     this.m_row = row;
@@ -19,7 +18,6 @@ export class AStar {
     this.openSet = new Set();
     this.closedSet = new Set();
     this.path = [];
-    // this.explored = [];
   }
 
   setStartNode(node) {
@@ -40,9 +38,6 @@ export class AStar {
   getPath() {
     return this.path;
   }
-  // getExplored() {
-  //   return this.explored;
-  // }
 
   heuristic = (currNode, targetNode) => {
     let targetNodeCord = targetNode.getCoordinate();
@@ -197,8 +192,8 @@ export class AStar {
 
         if (neighborNode !== this.targetNode) {
           cell.innerText = FCost;
-          // cell.className = "node-visited";
-          paintCell(neighborNode.getCoordinate(), CELL_TYPE.VISITED);
+          cell.className = "node-visited";
+          // paintCell(neighborNode.getCoordinate(), CELL_TYPE.VISITED);
           // this.explored.push(temp);
         }
       }

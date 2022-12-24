@@ -6,8 +6,8 @@ const solveBtn = document.getElementById("myButton1");
 const clearBtn = document.getElementById("myButton2");
 const pathStatus = document.getElementById("mySpan");
 
-const Width = 10,
-  Height = 10;
+const Width = 20,
+  Height = 20;
 
 let pathVisualDelay = 50; // ms
 
@@ -160,7 +160,7 @@ function handleMouseEnterAttach() {
 const selectCell = (position) => {
   if (pathDrawn) return;
   // console.log(position.row, position.col);
-  // handleMouseEnterAttach();
+  handleMouseEnterAttach();
 
   const cell = getCellDiv(position);
   const isCellClicked = cell.getAttribute("isSelected");

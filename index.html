@@ -15,19 +15,37 @@
             <header>
               <h2 class="header_title">Instructions</h2>
             </header>
-            1.) Select cell to set the <span class="blue">start</span> position.
+            1.Select cell to set the <span class="blue">start</span> position.
             <br />
-            2.) Select cell to set the <span class="red">end</span> position.
+            2.Select cell to set the <span class="red">end</span> position.
             <br />
-            3.) Select cells to add obstacles.
+            3.Select cells to add obstacles.
             <br />
-            4.) Click Start Search to start the animation.
+            4.Click Start Search to start the animation.
           </div>
 
           <div id="information_panel">
-            <header>
-              <h2 class="header_title">About A* search</h2>
-            </header>
+            <a
+              href="https://en.wikipedia.org/wiki/A*_search_algorithm"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <header>
+                <h2 class="header_title">About A* search</h2>
+              </header>
+            </a>
+            A* is an informed search algorithm, or a best-first search.
+            Specifically, A* selects the path that minimizes f(n),
+            <b>the number on the cells.</b>
+            <br /><br />
+            f(n) = g(n) + h(n), where:
+            <br /><br />
+            1. n is the next node on the path.
+            <br /><br />
+            2. g(n) is the cost of the path from the start node to n.
+            <br /><br />
+            3. h(n) is a heuristic function that estimates the cost of the
+            cheapest path from n to the goal; we use Euclidean distance.
           </div>
         </div>
         <div>

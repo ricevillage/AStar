@@ -6,8 +6,8 @@ const solveBtn = document.getElementById("myButton1");
 const clearBtn = document.getElementById("myButton2");
 const pathStatus = document.getElementById("mySpan");
 
-const Width = 20,
-  Height = 20;
+const Width = 35,
+  Height = 22;
 
 let pathVisualDelay = 50; // ms
 
@@ -101,7 +101,7 @@ function drawPath() {
   pathFinder.connectNeighborNodes();
   pathFinder.runAStar();
 
-  let path = pathFinder.getPath();
+  let path = pathFinder.Path;
 
   if (path.length === 0) {
     pathStatus.innerText = "No path found, generate new grid.";
@@ -140,16 +140,18 @@ function initVisualizer() {
   makeGrid(Height, Width);
 }
 
-function handleMouseEnterAttach() {
+function mountMouseDragEvent() {
   if (startSelected && targetSelected && !attachedMouseEnter) {
     for (let i = 0; i < Height * Width; i++) {
       const coord = getCoord(i);
       const cell = getCellDiv(coord);
       const isCellClicked = cell.getAttribute("isSelected");
       if (isCellClicked === "false") {
-        // mousedown
-        cell.addEventListener("mouseenter", function () {
-          selectCell(coord);
+        // mousedown & left click
+        cell.addEventListener("mouseenter", function (event) {
+          if (event.buttons === 1) {
+            selectCell(coord);
+          }
         });
       }
     }
@@ -160,14 +162,14 @@ function handleMouseEnterAttach() {
 const selectCell = (position) => {
   if (pathDrawn) return;
   // console.log(position.row, position.col);
-  handleMouseEnterAttach();
+  // mountMouseDragEvent();
 
   const cell = getCellDiv(position);
   const isCellClicked = cell.getAttribute("isSelected");
 
   if (isCellClicked === "true") {
-    const cellStart = pathFinder.getStartNode().coordinate;
-    const cellTarget = pathFinder.getTargetNode().coordinate;
+    const cellStart = pathFinder.StartNode.position;
+    const cellTarget = pathFinder.TargetNode.position;
     if (
       startSelected &&
       targetSelected &&
@@ -176,13 +178,14 @@ const selectCell = (position) => {
     ) {
       paintCell(position, CELL_TYPE.EMPTY);
       cell.setAttribute("isSelected", false);
-      pathFinder.getGrid().forEach((node) => {
-        let nRow = node.coordinate.row;
-        let nCol = node.coordinate.col;
+      for (const node of pathFinder.Grid) {
+        let nRow = node.position.row;
+        let nCol = node.position.col;
         if (nRow === position.row && nCol === position.col) {
-          pathFinder.getGrid().delete(node);
+          pathFinder.Grid.delete(node);
+          return;
         }
-      });
+      }
     }
     return;
   }
@@ -192,18 +195,19 @@ const selectCell = (position) => {
 
   if (!startSelected && !targetSelected) {
     startSelected = true;
-    pathFinder.setStartNode(newNode);
+    pathFinder.StartNode = newNode;
     paintCell(position, CELL_TYPE.START);
   } else if (startSelected && !targetSelected) {
     targetSelected = true;
-    pathFinder.setTargetNode(newNode);
+    pathFinder.TargetNode = newNode;
+    mountMouseDragEvent();
     paintCell(position, CELL_TYPE.TARGET);
   } else if (startSelected && targetSelected) {
-    newNode.setIsObstacle(true);
+    newNode.isObstacle = true;
     paintCell(position, CELL_TYPE.WALL);
   }
 
-  pathFinder.getGrid().add(newNode);
+  pathFinder.Grid.add(newNode);
 };
 
 clearBtn.addEventListener("click", resetGrid);

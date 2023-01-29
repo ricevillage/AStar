@@ -20,28 +20,28 @@ export class AStar {
     this.path = [];
   }
 
-  setStartNode(node) {
+  set StartNode(node) {
     this.startNode = node;
   }
-  setTargetNode(node) {
+  set TargetNode(node) {
     this.targetNode = node;
   }
-  getStartNode() {
+  get StartNode() {
     return this.startNode;
   }
-  getTargetNode() {
+  get TargetNode() {
     return this.targetNode;
   }
-  getGrid() {
+  get Grid() {
     return this.grid;
   }
-  getPath() {
+  get Path() {
     return this.path;
   }
 
   heuristic = (currNode, targetNode) => {
-    let targetNodeCord = targetNode.getCoordinate();
-    let currNodeCord = currNode.getCoordinate();
+    let targetNodeCord = targetNode.position;
+    let currNodeCord = currNode.position;
     // {row (y), col(x)}
 
     let dx = Math.abs(targetNodeCord.col - currNodeCord.col);
@@ -56,27 +56,27 @@ export class AStar {
   completeGrid = () => {
     for (let r = 0; r < this.m_row; r++) {
       for (let c = 0; c < this.m_col; c++) {
-        this.getGrid().forEach((node) => {
-          let nRow = node.coordinate.row;
-          let nCol = node.coordinate.col;
+        for (const node of this.grid) {
+          let nRow = node.position.row;
+          let nCol = node.position.col;
           if (nRow === r && nCol === r) {
-            return;
+            break;
           }
-        });
+        }
         let newNode = new Node({ row: r, col: c });
-        this.getGrid().add(newNode);
+        this.Grid.add(newNode);
       }
     }
   };
 
   connectNeighborNodes = () => {
     const offSets = [-1, 0, 1];
-    const offsetSize = 4;
+    const offsetSize = 3;
 
-    for (const node of this.getGrid()) {
+    for (const node of this.Grid) {
       for (let i = 0; i < offsetSize; i++) {
         for (let j = 0; j < offsetSize; j++) {
-          let coord = node.getCoordinate();
+          let coord = node.position;
           // {row (y), col(x)}
           let x = coord.col + offSets[j];
           let y = coord.row + offSets[i];
@@ -92,14 +92,14 @@ export class AStar {
             continue;
           }
 
-          for (const otherNode of this.getGrid()) {
-            let coord = otherNode.getCoordinate();
+          for (const otherNode of this.Grid) {
+            let coord = otherNode.position;
             // {row (y), col(x)}
             let otherX = coord.col;
             let otherY = coord.row;
             if (x === otherX && y === otherY) {
               //   console.log("(" + x + "," + y + ")\n");
-              node.getNeighbors().add(otherNode);
+              node.neighbors.add(otherNode);
               break;
             }
           }
@@ -109,9 +109,9 @@ export class AStar {
   };
 
   printNeighbors = () => {
-    for (const node of this.getGrid()) {
-      for (const neighbor of node.getNeighbors()) {
-        let coord = neighbor.getCoordinate();
+    for (const node of this.Grid) {
+      for (const neighbor of node.neighbors) {
+        let coord = neighbor.position;
         // {row (y), col(x)}
         let X = coord.col;
         let Y = coord.row;
@@ -124,13 +124,13 @@ export class AStar {
   runAStar = () => {
     this.openSet.add(this.startNode);
 
-    while (this.openSet.length !== 0) {
+    while (this.openSet.size !== 0) {
       let currentNode = null;
-      let min_FCost = 1e9;
+      let min_FCost = Infinity;
 
       for (const node of this.openSet) {
-        if (node.getFCost() < min_FCost) {
-          min_FCost = node.getFCost();
+        if (node.fCost < min_FCost) {
+          min_FCost = node.fCost;
           currentNode = node;
         }
       }
@@ -142,58 +142,58 @@ export class AStar {
         console.log("path found\n");
         // print path via parent
         while (currentNode) {
-          let coord = currentNode.getCoordinate();
+          let coord = currentNode.position;
           // {row (y), col(x)}
           let col = coord.col;
           let row = coord.row;
           this.path.unshift({ col, row });
           //   console.log("(" + X + "," + Y + ")\n");
-          currentNode = currentNode.getParent();
+          currentNode = currentNode.parent;
         }
         return;
       }
 
-      if (currentNode.getNeighbors() === null) return;
-      let neighbors = currentNode.getNeighbors();
+      if (currentNode.neighbors === null) return;
+      let neighbors = currentNode.neighbors;
 
       // let temp = [];
 
       for (const neighborNode of neighbors) {
         if (
-          neighborNode.getIsObstacle() === true ||
+          neighborNode.isObstacle === true ||
           this.closedSet.has(neighborNode)
         ) {
           continue;
         }
 
         let temp_gCost =
-          currentNode.getGCost() + this.heuristic(currentNode, neighborNode);
+          currentNode.gCost + this.heuristic(currentNode, neighborNode);
 
         if (
-          temp_gCost < neighborNode.getGCost() ||
+          temp_gCost < neighborNode.gCost ||
           !this.openSet.has(neighborNode)
         ) {
-          // temp.push(neighborNode.getCoordinate());
+          // temp.push(neighborNode.position);
 
-          neighborNode.setGCost(temp_gCost);
-          let hCost = this.heuristic(neighborNode, this.targetNode);
-          neighborNode.setHCost(hCost);
-          neighborNode.updateFCost(); // adds the two above
-          neighborNode.setParent(currentNode);
+          neighborNode.gCost = temp_gCost;
+          let h_Cost = this.heuristic(neighborNode, this.targetNode);
+          neighborNode.hCost = h_Cost;
+          neighborNode.fCost = h_Cost + temp_gCost;
+          neighborNode.parent = currentNode;
           if (!this.openSet.has(neighborNode)) {
             this.openSet.add(neighborNode);
           }
         }
 
-        const cell = getCellDiv(neighborNode.getCoordinate());
-        // const G_cost = Math.round(neighborNode.getGCost()).toString();
-        // const H_Cost = Math.round(neighborNode.getHCost()).toString();
-        const FCost = Math.round(neighborNode.getFCost()).toString();
+        const cell = getCellDiv(neighborNode.position);
+        // const G_cost = Math.round(neighborNode.gCost).toString();
+        // const H_Cost = Math.round(neighborNode.HCost).toString();
+        const FCost = Math.round(neighborNode.fCost).toString();
 
         if (neighborNode !== this.targetNode) {
           cell.innerText = FCost;
           cell.className = "node-visited";
-          // paintCell(neighborNode.getCoordinate(), CELL_TYPE.VISITED);
+          // paintCell(neighborNode.position, CELL_TYPE.VISITED);
           // this.explored.push(temp);
         }
       }

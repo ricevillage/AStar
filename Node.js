@@ -1,52 +1,51 @@
 export class Node {
-  h_cost = 0;
-  g_cost = 0;
-  f_cost = 0;
-  isObstacle = false;
-  parentNode;
-  neighbors;
-  coordinate = { row: null, col: null };
+  #h_cost = 0;
+  #g_cost = 0;
+  #f_cost = 0;
+  #isObstacle = false;
+  #parentNode;
+  #neighbors = new Set();
+  #position = { row: null, col: null };
 
-  constructor(coordinate) {
-    this.coordinate = coordinate;
-    this.neighbors = new Set();
-  }
-
-  setGCost(value) {
-    this.g_cost = value;
-  }
-  setHCost(value) {
-    this.h_cost = value;
-  }
-  setIsObstacle(value) {
-    this.isObstacle = value;
-  }
-  setParent(parentNode) {
-    this.parentNode = parentNode;
-  }
-  updateFCost() {
-    this.f_cost = this.h_cost + this.g_cost;
+  constructor(position) {
+    this.#position = position;
   }
 
-  getCoordinate() {
-    return this.coordinate;
+  set gCost(value) {
+    this.#g_cost = value;
   }
-  getGCost() {
-    return this.g_cost;
+  set hCost(value) {
+    this.#h_cost = value;
   }
-  getHCost() {
-    return this.h_cost;
+  set fCost(value) {
+    this.#f_cost = value;
   }
-  getFCost() {
-    return this.f_cost;
+  set isObstacle(value) {
+    this.#isObstacle = value;
   }
-  getIsObstacle() {
-    return this.isObstacle;
+  set parent(parentNode) {
+    this.#parentNode = parentNode;
   }
-  getParent() {
-    return this.parentNode;
+
+  get position() {
+    return this.#position;
   }
-  getNeighbors() {
-    return this.neighbors;
+  get gCost() {
+    return this.#g_cost;
+  }
+  get hCost() {
+    return this.#h_cost;
+  }
+  get fCost() {
+    return this.#f_cost;
+  }
+  get isObstacle() {
+    return this.#isObstacle;
+  }
+  get parent() {
+    return this.#parentNode;
+  }
+  get neighbors() {
+    return this.#neighbors;
   }
 }

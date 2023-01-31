@@ -18,6 +18,7 @@ export class AStar {
     this.openSet = new Set();
     this.closedSet = new Set();
     this.path = [];
+    this.explored = [];
   }
 
   set StartNode(node) {
@@ -191,10 +192,15 @@ export class AStar {
         const FCost = Math.round(neighborNode.fCost).toString();
 
         if (neighborNode !== this.targetNode) {
-          cell.innerText = FCost;
-          cell.className = "node-visited";
+          // cell.innerText = FCost;
+          // cell.className = "node-visited";
           // paintCell(neighborNode.position, CELL_TYPE.VISITED);
-          // this.explored.push(temp);
+
+          let coord = neighborNode.position;
+          // {row (y), col(x)}
+          let col = coord.col;
+          let row = coord.row;
+          this.explored.push({ col, row, FCost });
         }
       }
     }

@@ -9,7 +9,8 @@ const pathStatus = document.getElementById("mySpan");
 const Width = 35,
   Height = 22;
 
-let pathVisualDelay = 50; // ms
+const pathVisualDelay = 50; // ms
+const exploredVisualDelay = 10;
 
 export const CELL_TYPE = {
   EMPTY: "EMPTY",
@@ -101,6 +102,7 @@ function drawPath() {
   pathFinder.connectNeighborNodes();
   pathFinder.runAStar();
 
+  let explored = pathFinder.explored;
   let path = pathFinder.Path;
 
   if (path.length === 0) {
@@ -111,16 +113,30 @@ function drawPath() {
   }
 
   // https://stackoverflow.com/a/30865841 - setTimeout
-  for (let i = 1; i < path.length - 1; i++) {
+  for (let i = 0; i < explored.length; i++) {
     (function (i) {
       setTimeout(function () {
-        const coord = { row: path[i].row, col: path[i].col };
-        // console.log(x, y);
+        const coord = { row: explored[i].row, col: explored[i].col };
         const cell = getCellDiv(coord);
         cell.setAttribute("isSelected", true);
-        cell.className = "node-shortest-path";
-        // paintCell(coord, CELL_TYPE.PATH);
-      }, pathVisualDelay * i);
+        cell.className = "node-visited";
+        cell.innerText = explored[i].FCost;
+
+        // Check if the last iteration of the first animation
+        if (i === explored.length - 1) {
+          // Second animation
+          for (let i = 1; i < path.length - 1; i++) {
+            (function (i) {
+              setTimeout(function () {
+                const coord = { row: path[i].row, col: path[i].col };
+                const cell = getCellDiv(coord);
+                cell.setAttribute("isSelected", true);
+                cell.className = "node-shortest-path";
+              }, pathVisualDelay * i);
+            })(i);
+          }
+        }
+      }, exploredVisualDelay * i);
     })(i);
   }
 

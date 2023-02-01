@@ -159,8 +159,10 @@ function drawPath() {
         const cell = getCellDiv(coord);
         cell.setAttribute("isSelected", true);
         cell.className = "node-visited";
-        const FCost = Math.round(explored[i].fCost).toString();
-        cell.innerText = FCost;
+        if (searchAlgorithm === SEARCH_ALGORITHM.ASTAR) {
+          const FCost = Math.round(explored[i].fCost).toString();
+          cell.innerText = FCost;
+        }
 
         // Check if the last iteration of the first animation
         if (i === explored.length - 1) {

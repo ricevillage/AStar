@@ -1,6 +1,4 @@
 :root {
-  --grid-cols: 1;
-  --grid-rows: 1;
   --primary-color: #00beda;
   --secondary-color: rgb(134, 154, 189);
 }
@@ -28,11 +26,14 @@
 }
 
 .grid-item {
-  padding: 1em;
+  padding: 0px;
   outline: 1px solid var(--secondary-color);
   border: 1px solid #ddd;
   text-align: center;
   font-size: 11px;
+
+  min-width: 22px;
+  min-height: 22px;
 }
 
 .node-visited {

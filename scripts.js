@@ -1,12 +1,13 @@
-import { AStar } from "./AStar.js";
 import { Node } from "./Node.js";
+import { PathFinder } from "./PathFinder.js";
 
 const container = document.getElementById("container");
 const solveBtn = document.getElementById("myButton1");
 const clearBtn = document.getElementById("myButton2");
 const pathStatus = document.getElementById("mySpan");
+const pathFindingList = document.querySelector(".pathFindingList");
 
-const Width = 35,
+const Width = 40,
   Height = 22;
 
 const pathVisualDelay = 50; // ms
@@ -25,6 +26,7 @@ let startSelected, targetSelected;
 let attachedMouseEnter;
 let pathDrawn;
 let pathFinder;
+let searchAlgorithm;
 
 function removeAllChildNodes(parent) {
   while (parent.firstChild) {
@@ -94,13 +96,17 @@ export function paintCell(position, type) {
 }
 
 function drawPath() {
-  if (!startSelected || !targetSelected || pathDrawn) return;
+  if (
+    !startSelected ||
+    !targetSelected ||
+    pathDrawn ||
+    searchAlgorithm === undefined ||
+    searchAlgorithm === "---Select Algorithm---"
+  )
+    return;
 
-  // console.log(pathFinder.getGrid());
-
-  pathFinder.completeGrid();
-  pathFinder.connectNeighborNodes();
-  pathFinder.runAStar();
+  // console.log(pathFinder.Grid);
+  pathFinder.run(searchAlgorithm);
 
   let explored = pathFinder.explored;
   let path = pathFinder.Path;
@@ -116,11 +122,15 @@ function drawPath() {
   for (let i = 0; i < explored.length; i++) {
     (function (i) {
       setTimeout(function () {
-        const coord = { row: explored[i].row, col: explored[i].col };
+        const coord = {
+          row: explored[i].position.row,
+          col: explored[i].position.col,
+        };
         const cell = getCellDiv(coord);
         cell.setAttribute("isSelected", true);
         cell.className = "node-visited";
-        cell.innerText = explored[i].FCost;
+        const FCost = Math.round(explored[i].fCost).toString();
+        cell.innerText = FCost;
 
         // Check if the last iteration of the first animation
         if (i === explored.length - 1) {
@@ -128,7 +138,10 @@ function drawPath() {
           for (let i = 1; i < path.length - 1; i++) {
             (function (i) {
               setTimeout(function () {
-                const coord = { row: path[i].row, col: path[i].col };
+                const coord = {
+                  row: path[i].position.row,
+                  col: path[i].position.col,
+                };
                 const cell = getCellDiv(coord);
                 cell.setAttribute("isSelected", true);
                 cell.className = "node-shortest-path";
@@ -152,7 +165,7 @@ function resetGrid() {
 }
 
 function initVisualizer() {
-  pathFinder = new AStar(Height, Width);
+  pathFinder = new PathFinder(Height, Width);
   makeGrid(Height, Width);
 }
 
@@ -226,5 +239,10 @@ const selectCell = (position) => {
   pathFinder.Grid.add(newNode);
 };
 
+const selectAlgorithm = () => {
+  searchAlgorithm = pathFindingList.options[pathFindingList.selectedIndex].text;
+};
+
 clearBtn.addEventListener("click", resetGrid);
 solveBtn.addEventListener("click", drawPath);
+pathFindingList.addEventListener("change", selectAlgorithm);

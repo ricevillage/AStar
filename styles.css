@@ -9,6 +9,7 @@
   display: flex;
   justify-items: center;
   align-items: center;
+  justify-content: center;
 }
 
 a {
@@ -18,19 +19,6 @@ a {
 
 #mySpan {
   background-color: antiquewhite;
-}
-
-#instructions_panel {
-  background-color: antiquewhite;
-}
-
-#information_panel {
-  background-color: antiquewhite;
-}
-
-#left-panel {
-  /* width: 300px; */
-  padding-right: 30px;
 }
 
 .mainBtns {
@@ -45,6 +33,10 @@ a {
 
 .red {
   color: red;
+}
+
+select::-ms-expand {
+  display: none;
 }
 
 #container {

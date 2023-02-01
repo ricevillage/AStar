@@ -18,7 +18,10 @@ export class Dijkstra {
       let current = null;
       let closest = Infinity;
       for (const node of this.unvisited) {
-        if (this.distances.get(node) < closest && !node.isObstacle) {
+        if (this.distances.get(node) < closest) {
+          if (node.isObstacle) {
+            continue;
+          }
           closest = this.distances.get(node);
           current = node;
         }

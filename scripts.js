@@ -2,10 +2,11 @@ import { Node } from "./Node.js";
 import { PathFinder } from "./PathFinder.js";
 
 const container = document.getElementById("container");
-const solveBtn = document.getElementById("myButton1");
-const clearBtn = document.getElementById("myButton2");
+const solveBtn = document.getElementById("startButton");
+const clearBtn = document.getElementById("clearButton");
 const pathStatus = document.getElementById("mySpan");
 const pathFindingList = document.querySelector(".pathFindingList");
+const diagonalToggleSwitch = document.getElementById("diagonalToggleSwitch");
 
 const Width = 40,
   Height = 22;
@@ -22,11 +23,20 @@ export const CELL_TYPE = {
   VISITED: "VISITED",
 };
 
+export const SEARCH_ALGORITHM = {
+  NONE: "---Select Algorithm---",
+  DIJKSTRA: "Dijkstra",
+  DFS: "Depth-first Search",
+  BFS: "Breadth-first Search",
+  ASTAR: "A* Search",
+};
+
 let startSelected, targetSelected;
 let attachedMouseEnter;
 let pathDrawn;
 let pathFinder;
 let searchAlgorithm;
+export let allowDiagonal;
 
 function removeAllChildNodes(parent) {
   while (parent.firstChild) {
@@ -65,7 +75,26 @@ function getCoord(index) {
   return { row, col };
 }
 
-initVisualizer();
+const disableButtons = () => {
+  solveBtn.disabled = true;
+  clearBtn.disabled = true;
+  pathFindingList.disabled = true;
+  diagonalToggleSwitch.disabled = true;
+};
+
+const enableButtons = () => {
+  solveBtn.disabled = false;
+  clearBtn.disabled = false;
+  pathFindingList.disabled = false;
+  diagonalToggleSwitch.disabled = false;
+};
+
+const handleDiagonal = () => {
+  allowDiagonal = !allowDiagonal;
+  let backgroundColor = allowDiagonal ? "lightgreen" : "buttonface";
+
+  diagonalToggleSwitch.style.backgroundColor = backgroundColor;
+};
 
 // https://stackoverflow.com/a/61093874
 export function getCellDiv(position) {
@@ -101,11 +130,10 @@ function drawPath() {
     !targetSelected ||
     pathDrawn ||
     searchAlgorithm === undefined ||
-    searchAlgorithm === "---Select Algorithm---"
+    searchAlgorithm === SEARCH_ALGORITHM.NONE
   )
     return;
 
-  // console.log(pathFinder.Grid);
   pathFinder.run(searchAlgorithm);
 
   let explored = pathFinder.explored;
@@ -117,6 +145,8 @@ function drawPath() {
   } else {
     pathStatus.innerText = "Shortest path found.";
   }
+
+  disableButtons();
 
   // https://stackoverflow.com/a/30865841 - setTimeout
   for (let i = 0; i < explored.length; i++) {
@@ -145,6 +175,8 @@ function drawPath() {
                 const cell = getCellDiv(coord);
                 cell.setAttribute("isSelected", true);
                 cell.className = "node-shortest-path";
+
+                enableButtons();
               }, pathVisualDelay * i);
             })(i);
           }
@@ -190,8 +222,6 @@ function mountMouseDragEvent() {
 
 const selectCell = (position) => {
   if (pathDrawn) return;
-  // console.log(position.row, position.col);
-  // mountMouseDragEvent();
 
   const cell = getCellDiv(position);
   const isCellClicked = cell.getAttribute("isSelected");
@@ -246,3 +276,5 @@ const selectAlgorithm = () => {
 clearBtn.addEventListener("click", resetGrid);
 solveBtn.addEventListener("click", drawPath);
 pathFindingList.addEventListener("change", selectAlgorithm);
+initVisualizer();
+diagonalToggleSwitch.addEventListener("click", handleDiagonal);

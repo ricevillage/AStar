@@ -12,31 +12,10 @@
   justify-content: center;
 }
 
-a {
-  color: green;
-  text-decoration: none;
-}
-
-#mySpan {
-  background-color: antiquewhite;
-}
-
 .mainBtns {
   margin: 20px 0px;
   display: flex;
   justify-content: flex-end;
-}
-
-.blue {
-  color: blue;
-}
-
-.red {
-  color: red;
-}
-
-select::-ms-expand {
-  display: none;
 }
 
 #container {

@@ -11,6 +11,9 @@ export class Bfs {
 
     while (this.queue.length > 0) {
       const currentNode = this.queue.shift();
+
+      if (currentNode.isObstacle) continue;
+
       if (currentNode === targetNode) {
         let node = targetNode;
         while (node !== startNode) {

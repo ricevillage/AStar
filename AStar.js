@@ -7,6 +7,7 @@ export class AStar {
     this.closedSet = new Set();
   }
 
+  // manhattanDistance
   heuristic = (currNode, targetNode) => {
     let targetNodeCord = targetNode.position;
     let currNodeCord = currNode.position;

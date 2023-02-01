@@ -1,8 +1,10 @@
+import { SEARCH_ALGORITHM } from "./scripts.js";
 import { Node } from "./Node.js";
 import { AStar } from "./AStar.js";
 import { Dfs } from "./Dfs.js";
 import { Bfs } from "./Bfs.js";
 import { Dijkstra } from "./Dijkstra.js";
+import { allowDiagonal } from "./scripts.js";
 
 export class PathFinder {
   startNode;
@@ -56,38 +58,46 @@ export class PathFinder {
   };
 
   connectNeighborNodes = () => {
-    const offSets = [-1, 0, 1];
-    const offsetSize = 3;
+    const offSets = [
+      [-1, 0],
+      [0, -1],
+      [0, 1],
+      [1, 0],
+    ];
+
+    if (allowDiagonal) {
+      offSets.push([-1, -1]);
+      offSets.push([-1, 1]);
+      offSets.push([1, -1]);
+      offSets.push([1, 1]);
+    }
 
     for (const node of this.Grid) {
-      for (let i = 0; i < offsetSize; i++) {
-        for (let j = 0; j < offsetSize; j++) {
-          let coord = node.position;
-          // {row (y), col(x)}
-          let x = coord.col + offSets[j];
-          let y = coord.row + offSets[i];
+      let coord = node.position;
+      let x = coord.col;
+      let y = coord.row;
 
-          // out of bounds, or same coordinate
-          if (
-            x < 0 ||
-            y < 0 ||
-            x >= this.m_col ||
-            y >= this.m_row ||
-            (offSets[i] === 0 && offSets[j] === 0)
-          ) {
-            continue;
-          }
+      for (const offset of offSets) {
+        let neighborX = x + offset[0];
+        let neighborY = y + offset[1];
 
-          for (const otherNode of this.Grid) {
-            let coord = otherNode.position;
-            // {row (y), col(x)}
-            let otherX = coord.col;
-            let otherY = coord.row;
-            if (x === otherX && y === otherY) {
-              //   console.log("(" + x + "," + y + ")\n");
-              node.neighbors.add(otherNode);
-              break;
-            }
+        // check if out of bounds
+        if (
+          neighborX < 0 ||
+          neighborY < 0 ||
+          neighborX >= this.m_col ||
+          neighborY >= this.m_row
+        ) {
+          continue;
+        }
+
+        // find the neighbor node
+        // add the neighbor node to the current node's neighbors set
+        for (const otherNode of this.Grid) {
+          let otherCoord = otherNode.position;
+          if (otherCoord.col === neighborX && otherCoord.row === neighborY) {
+            node.neighbors.add(otherNode);
+            break;
           }
         }
       }
@@ -112,7 +122,7 @@ export class PathFinder {
     this.connectNeighborNodes();
 
     switch (searchAlgorithm) {
-      case "Dijkstra":
+      case SEARCH_ALGORITHM.DIJKSTRA:
         const algo1 = new Dijkstra();
         algo1.runDijkstra(
           this.grid,
@@ -122,15 +132,15 @@ export class PathFinder {
           this.explored
         );
         break;
-      case "Depth-first Search":
+      case SEARCH_ALGORITHM.DFS:
         const algo2 = new Dfs();
         algo2.runDfs(this.startNode, this.targetNode, this.path, this.explored);
         break;
-      case "Breadth-first Search":
+      case SEARCH_ALGORITHM.BFS:
         const algo3 = new Bfs();
         algo3.runBfs(this.startNode, this.targetNode, this.path, this.explored);
         break;
-      case "A* Search":
+      case SEARCH_ALGORITHM.ASTAR:
         const algo4 = new AStar();
         algo4.runAStar(
           this.startNode,

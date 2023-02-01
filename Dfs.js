@@ -9,14 +9,18 @@ export class Dfs {
 
     while (this.stack.length > 0) {
       const currentNode = this.stack.pop();
+
+      if (currentNode.isObstacle) continue;
+
       if (currentNode === targetNode) {
         path.push(currentNode);
         break;
       }
 
-      if (!this.visited.has(currentNode) && !currentNode.isObstacle) {
+      if (currentNode !== startNode) explored.push(currentNode);
+
+      if (!this.visited.has(currentNode)) {
         this.visited.add(currentNode);
-        if (currentNode !== startNode) explored.push(currentNode);
         for (const neighbor of currentNode.neighbors) {
           if (!this.visited.has(neighbor) && !neighbor.isObstacle) {
             this.stack.push(neighbor);
@@ -25,7 +29,5 @@ export class Dfs {
         path.push(currentNode);
       }
     }
-
-    return [];
   };
 }

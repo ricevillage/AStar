@@ -124,17 +124,37 @@ export function paintCell(position, type) {
   cell.style.background = color;
 }
 
+const resetGridState = () => {
+  const classes = ["node-visited", "node-shortest-path"];
+  for (let r = 0; r < Height; r++) {
+    for (let c = 0; c < Width; c++) {
+      const position = { row: r, col: c };
+      let cell = getCellDiv(position);
+      if (
+        cell.classList.contains("node-visited") ||
+        cell.classList.contains("node-shortest-path")
+      ) {
+        cell.setAttribute("isSelected", false);
+        cell.classList.remove(...classes);
+        cell.classList.add("grid-item");
+        cell.innerText = "";
+      }
+    }
+  }
+};
+
 function drawPath() {
   if (
     !startSelected ||
     !targetSelected ||
-    pathDrawn ||
+    // pathDrawn ||
     searchAlgorithm === undefined ||
     searchAlgorithm === SEARCH_ALGORITHM.NONE
   )
     return;
 
-  pathFinder.run(searchAlgorithm);
+  resetGridState();
+  pathFinder.runPathFinder(searchAlgorithm);
 
   let explored = pathFinder.explored;
   let path = pathFinder.Path;
@@ -195,12 +215,16 @@ function resetGrid() {
   targetSelected = false;
   attachedMouseEnter = false;
   pathDrawn = false;
-  initVisualizer();
+  pathFinder.resetPathFinder();
+  makeGrid(Height, Width);
 }
 
 function initVisualizer() {
   pathFinder = new PathFinder(Height, Width);
   makeGrid(Height, Width);
+  allowDiagonal = false;
+  pathFinder.initGraph();
+  pathFinder.connectNeighborNodes();
 }
 
 function mountMouseDragEvent() {
@@ -222,6 +246,17 @@ function mountMouseDragEvent() {
   }
 }
 
+const getNode = (position) => {
+  for (const node of pathFinder.Grid) {
+    let nRow = node.position.row;
+    let nCol = node.position.col;
+    if (nRow === position.row && nCol === position.col) {
+      return node;
+    }
+  }
+  return null;
+};
+
 const selectCell = (position) => {
   if (pathDrawn) return;
 
@@ -239,36 +274,28 @@ const selectCell = (position) => {
     ) {
       paintCell(position, CELL_TYPE.EMPTY);
       cell.setAttribute("isSelected", false);
-      for (const node of pathFinder.Grid) {
-        let nRow = node.position.row;
-        let nCol = node.position.col;
-        if (nRow === position.row && nCol === position.col) {
-          pathFinder.Grid.delete(node);
-          return;
-        }
-      }
+      let node = getNode(position);
+      node.isObstacle = false;
     }
     return;
   }
 
   cell.setAttribute("isSelected", true);
-  let newNode = new Node(position);
+  let selectedNode = getNode(position);
 
   if (!startSelected && !targetSelected) {
     startSelected = true;
-    pathFinder.StartNode = newNode;
+    pathFinder.StartNode = selectedNode;
     paintCell(position, CELL_TYPE.START);
   } else if (startSelected && !targetSelected) {
     targetSelected = true;
-    pathFinder.TargetNode = newNode;
+    pathFinder.TargetNode = selectedNode;
     mountMouseDragEvent();
     paintCell(position, CELL_TYPE.TARGET);
   } else if (startSelected && targetSelected) {
-    newNode.isObstacle = true;
+    selectedNode.isObstacle = true;
     paintCell(position, CELL_TYPE.WALL);
   }
-
-  pathFinder.Grid.add(newNode);
 };
 
 const selectAlgorithm = () => {

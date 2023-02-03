@@ -29,6 +29,7 @@ export const SEARCH_ALGORITHM = {
   DFS: "Depth-first Search",
   BFS: "Breadth-first Search",
   ASTAR: "A* Search",
+  BDS: "Bidirectional Search",
 };
 
 let startSelected, targetSelected;

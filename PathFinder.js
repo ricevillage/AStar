@@ -5,6 +5,7 @@ import { Dfs } from "./Dfs.js";
 import { Bfs } from "./Bfs.js";
 import { Dijkstra } from "./Dijkstra.js";
 import { allowDiagonal } from "./scripts.js";
+import { BidirectionalSearch } from "./BidirectionalSearch.js";
 
 export class PathFinder {
   constructor(row, col) {
@@ -164,6 +165,15 @@ export class PathFinder {
       case SEARCH_ALGORITHM.ASTAR:
         const algo4 = new AStar();
         algo4.runAStar(
+          this.startNode,
+          this.targetNode,
+          this.path,
+          this.explored
+        );
+        break;
+      case SEARCH_ALGORITHM.BDS:
+        const algo5 = new BidirectionalSearch();
+        algo5.runBidirectionalSearch(
           this.startNode,
           this.targetNode,
           this.path,

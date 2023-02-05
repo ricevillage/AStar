@@ -1,4 +1,4 @@
-import { SEARCH_ALGORITHM } from "./scripts.js";
+import { SEARCH_ALGORITHM, targetSelected } from "./scripts.js";
 import { Node } from "./Node.js";
 import { AStar } from "./AStar.js";
 import { Dfs } from "./Dfs.js";
@@ -6,6 +6,7 @@ import { Bfs } from "./Bfs.js";
 import { Dijkstra } from "./Dijkstra.js";
 import { allowDiagonal } from "./scripts.js";
 import { BidirectionalSearch } from "./BidirectionalSearch.js";
+import { MazeGenerator } from "./MazeGenerator.js";
 
 export class PathFinder {
   constructor(row, col) {
@@ -16,6 +17,7 @@ export class PathFinder {
     this.grid = new Set();
     this.path = [];
     this.explored = [];
+    this.mazeGen = new MazeGenerator();
   }
 
   set StartNode(node) {
@@ -183,5 +185,10 @@ export class PathFinder {
       default:
         console.error("Invalid search algorithm specified");
     }
+  };
+
+  runMazeGen = () => {
+    if (!targetSelected) return;
+    this.mazeGen.runMazeGenerator(/*this.startNode*/ this.Grid);
   };
 }

@@ -1,9 +1,9 @@
-import { Node } from "./Node.js";
 import { PathFinder } from "./PathFinder.js";
 
 const container = document.getElementById("container");
 const solveBtn = document.getElementById("startButton");
 const clearBtn = document.getElementById("clearButton");
+const generateMazeBtn = document.getElementById("mazeGenerator");
 const pathStatus = document.getElementById("mySpan");
 const pathFindingList = document.querySelector(".pathFindingList");
 const diagonalToggleSwitch = document.getElementById("diagonalToggleSwitch");
@@ -32,7 +32,7 @@ export const SEARCH_ALGORITHM = {
   BDS: "Bidirectional Search",
 };
 
-let startSelected, targetSelected;
+export let startSelected, targetSelected;
 let attachedMouseEnter;
 let pathDrawn;
 let pathFinder;
@@ -80,6 +80,7 @@ const disableButtons = () => {
   solveBtn.disabled = true;
   clearBtn.disabled = true;
   pathFindingList.disabled = true;
+  generateMazeBtn.disabled = true;
   diagonalToggleSwitch.disabled = true;
 };
 
@@ -87,6 +88,7 @@ const enableButtons = () => {
   solveBtn.disabled = false;
   clearBtn.disabled = false;
   pathFindingList.disabled = false;
+  generateMazeBtn.disabled = false;
   diagonalToggleSwitch.disabled = false;
 };
 
@@ -258,7 +260,7 @@ const getNode = (position) => {
   return null;
 };
 
-const selectCell = (position) => {
+export const selectCell = (position) => {
   if (pathDrawn) return;
 
   const cell = getCellDiv(position);
@@ -308,3 +310,4 @@ solveBtn.addEventListener("click", drawPath);
 pathFindingList.addEventListener("change", selectAlgorithm);
 initVisualizer();
 diagonalToggleSwitch.addEventListener("click", handleDiagonal);
+generateMazeBtn.addEventListener("click", pathFinder.runMazeGen);
